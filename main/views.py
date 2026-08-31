@@ -35,11 +35,14 @@ def category_detail(request,category_id):
     })
 
 def free_apps(request, app_id):
-    apps = get_object_or_404(App.objects.filter(price=0), id=app_id)
+    apps = get_object_or_404(App.objects.filter(price=0))
     return render(request, 'main/free.html', {
         'apps':apps
     })
 
+def new(request):
+    apps = App.objects.order_by('-created_at')[:5]
+    return render(request,'main/new.html',{'apps':apps})
 
 
 
