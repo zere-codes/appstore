@@ -1,0 +1,22 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Топ по цене{% endblock %}
+
+{% block content %}
+
+<p><a href="{% url 'index' %}">← ко всем приложениям</a></p>
+
+     <ul>
+        {% for app in apps %}
+        <li><a href="{% url 'app_detail' app.id %}">{{app.name}}</a> -
+
+        {{app.price }}
+        </li>
+        {% empty %}
+        <li>Платных приложений пока нет</li>
+        {% endfor %}
+    </ul>
+
+
+
+{% endblock %}

@@ -10,6 +10,9 @@ urlpatterns = [
     path('category/<int:category_id>/', views.category_detail, name='category'),
     path('free/', views.free_apps, name='free'),
     path('new/', views.new, name='new'),
+    path('top/', views.top, name='top'),
+    path('nocategory/', views.no_category, name='nocategory'),
+
 ]
 
 

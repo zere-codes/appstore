@@ -2,16 +2,21 @@
 
 {% block title %}Бесплатные{% endblock %}
 
+{% block content %}
+
 <p><a href="{% url 'index' %}">← ко всем приложениям</a></p>
 
-    <ul>
-    {% for app in apps %}
-        <li>
-            <a href="{% url 'app_detail' app.id %}">{{ app.name }}</a>
+     <ul>
+        {% for app in apps %}
+        <li><a href="{% url 'app_detail' app.id %}">{{app.name}}</a>
+
 
         </li>
-    {% empty %}
-        <li>Бесплатных приложении пока нет</li>
-    {% endfor %}
+        {% empty %}
+        <li>Бесплатных приложений пока нет</li>
+        {% endfor %}
     </ul>
+        <p>Бесплатных приложении- {{ apps|length }}</p>
 
+
+{% endblock %}

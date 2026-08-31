@@ -1,0 +1,26 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Приложения без категории{% endblock %}
+
+{% block content %}
+
+<p><a href="{% url 'index' %}">← ко всем приложениям</a></p>
+
+     <ul>
+        {% for app in apps %}
+        <li><a href="{% url 'app_detail' app.id %}">{{app.name}}</a> -
+
+
+        </li>
+        {% empty %}
+        <li>Приложений без категории пока нет</li>
+        {% endfor %}
+    </ul>
+
+{%endblock%>
+
+
+
+
+
+
