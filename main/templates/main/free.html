@@ -1,0 +1,17 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Бесплатные{% endblock %}
+
+<p><a href="{% url 'index' %}">← ко всем приложениям</a></p>
+
+    <ul>
+    {% for app in apps %}
+        <li>
+            <a href="{% url 'app_detail' app.id %}">{{ app.name }}</a>
+
+        </li>
+    {% empty %}
+        <li>Бесплатных приложении пока нет</li>
+    {% endfor %}
+    </ul>
+
