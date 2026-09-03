@@ -12,6 +12,8 @@ urlpatterns = [
     path('new/', views.new, name='new'),
     path('top/', views.top, name='top'),
     path('nocategory/', views.no_category, name='nocategory'),
+    path('/category_free/<int:category_id>/', views.category_free, name='category_free'),
+    path('cheap/', views.cheap, name='cheap'),
 
 ]
 

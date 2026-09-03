@@ -1,6 +1,6 @@
 {% extends 'main/base.html' %}
 
-{% block title %}Приложения без категории{% endblock %}
+{% block title %}The cheap ones{% endblock %}
 
 {% block content %}
 
@@ -9,16 +9,14 @@
      <ul>
         {% for app in apps %}
         <li><a href="{% url 'app_detail' app.id %}">{{app.name}}</a>
+
+
         </li>
         {% empty %}
-        <li>Приложений без категории пока нет</li>
+        <li>Бесплатных приложений пока нет</li>
         {% endfor %}
     </ul>
 
-{%endblock%}
 
 
-
-
-
-
+{% endblock %}

@@ -23,15 +23,18 @@ def about(request):
 
 def app_detail(request,app_id):
     app = get_object_or_404(App, id=app_id)
-    return render(request,'main/app_detail.html',{'app':app})
+    similar=App.objects.filter(price__gte=app.price - 30, price__lte=app.price + 30).exclude(id=app.id)[:3]
+    return render(request,'main/app_detail.html',{'app':app, 'similar':similar})
 
 
 def category_detail(request,category_id):
     category=get_object_or_404(Category, id=category_id)
     apps=App.objects.filter(category=category)
+    top_app=apps.order_by('-price').first()
     return render(request, 'main/category.html', {
         'category':category,
-        'apps':apps
+        'apps':apps,
+        'top_app': top_app
     })
 
 def free_apps(request):
@@ -51,6 +54,15 @@ def top(request):
 def no_category(request):
     apps = App.objects.filter(category=None)
     return render(request,'main/nocategory.html',{'apps':apps})
+
+def category_free(request, category_id):
+    category = Category.objects.get(id=category_id)
+    apps = App.objects.filter(category=category, price=0)
+    return render(request, 'main/category_free.html', {'apps': apps})
+
+def cheap(request):
+    apps = App.objects.filter(price__gt=0, price__lt=100).order_by('price')
+    return render(request, 'main/cheap.html', {'apps': apps})
 
 
 

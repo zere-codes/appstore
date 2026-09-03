@@ -16,6 +16,11 @@
 
     <p>{{app.description|default:"описание пока не добавлено"}}</p>
 
+    <p>Примерно по такой цене:</p>
+    {% for app in similar %}
+        <a href="{% url 'app_detail' app.id %}">{{ app.name }}</a>
+        <br>
+    {% endfor %}
 
     <p>Добавлено: {{app.created_at|date:"d.m.Y H:i"}}</p>
 

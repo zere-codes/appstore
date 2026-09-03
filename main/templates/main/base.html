@@ -11,12 +11,34 @@
 <body>
     <h1>AppStore</h1>
     <nav>
-      <a href="{%url 'index' %}">Главная</a>
-      <a href="{%url 'about' %}">О магазинах</a>
-      <a href="{%url 'free' %}">Бесплатные</a>
-      <a href="{%url 'new' %}">Новинки</a>
-      <a href="{%url 'top' %}">Топ по цене</a>
-      <a href="{%url 'nocategory' %}">Без категории</a>
+      <a href="{%url 'index' %}"
+        {% if request.path == ''%}
+        style="font-weight: bold" {% endif %}>Главная</a>
+
+        <a href="{%url 'about' %}"
+        {% if request.path == '/about/'%}
+        style="font-weight: bold" {% endif %}>О магазинах</a>
+
+      <a href="{%url 'free' %}"
+        {% if request.path == '/free/'%}
+        style="font-weight: bold" {% endif %}>Бесплатные</a>
+
+        <a href="{%url 'new' %}"
+        {% if request.path == '/new/'%}
+        style="font-weight: bold" {% endif %}>Новинки</a>
+
+        <a href="{%url 'top' %}"
+        {% if request.path == '/top/'%}
+        style="font-weight: bold" {% endif %}>Топ по цене</a>
+
+        <a href="{%url 'nocategory' %}"
+        {% if request.path == '/nocategory/'%}
+        style="font-weight: bold" {% endif %}>Без категории</a>
+
+        <a href="{%url 'cheap' %}"
+        {% if request.path == '/cheap/'%}
+        style="font-weight: bold" {% endif %}>Дешево</a>
+
 
     </nav>
     {% block content %}{% endblock %}
