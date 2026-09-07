@@ -4,6 +4,7 @@ from .models import App, Category
 from django.http import HttpResponse
 from django.db.models import Q
 from django.core.paginator import Paginator
+import uuid
 SORTS = {
     'new': '-created_at',
     'name': 'name',
@@ -84,8 +85,11 @@ def cheap(request):
     apps = App.objects.filter(price__gt=0, price__lt=100).order_by('price')
     return render(request, 'main/cheap.html', {'apps': apps})
 
+def archive_year(request, year):
+    return HttpResponse(f"Вы открыли архив за {year} год")
 
+def developer(request, name):
+   return HttpResponse(f"Страница разработчика: {name}")
 
-
-
-
+def secure(request, key):
+    return HttpResponse(f"Безопасный доступ к приложению по ключу: {key}")

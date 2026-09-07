@@ -11,40 +11,40 @@
 <body>
     <h1>AppStore</h1>
     <nav>
-      <a href="{%url 'index' %}"
+      <a href="{%url 'main:index' %}"
         {% if request.path == ''%}
         style="font-weight: bold" {% endif %}>Главная</a>
 
-        <a href="{%url 'about' %}"
+        <a href="{%url 'main:about' %}"
         {% if request.path == '/about/'%}
         style="font-weight: bold" {% endif %}>О магазинах</a>
 
-      <a href="{%url 'free' %}"
+      <a href="{%url 'main:free' %}"
         {% if request.path == '/free/'%}
         style="font-weight: bold" {% endif %}>Бесплатные</a>
 
-        <a href="{%url 'new' %}"
+        <a href="{%url 'main:new' %}"
         {% if request.path == '/new/'%}
         style="font-weight: bold" {% endif %}>Новинки</a>
 
-        <a href="{%url 'top' %}"
+        <a href="{%url 'main:top' %}"
         {% if request.path == '/top/'%}
         style="font-weight: bold" {% endif %}>Топ по цене</a>
 
-        <a href="{%url 'nocategory' %}"
+        <a href="{%url 'main:nocategory' %}"
         {% if request.path == '/nocategory/'%}
         style="font-weight: bold" {% endif %}>Без категории</a>
 
-        <a href="{%url 'cheap' %}"
+        <a href="{%url 'main:cheap' %}"
         {% if request.path == '/cheap/'%}
         style="font-weight: bold" {% endif %}>Дешево</a>
 
 
     </nav>
 
-   <form method="GET" action="{% url 'index' %}">
+   <form method="GET" action="{% url 'main:index' %}">
     <input type="text" name="q" placeholder="Поиск приложений..." value="{{ q }}">
-   
+
     <button type="submit">Найти</button>
 </form>
     {% block content %}{% endblock %}

@@ -4,11 +4,11 @@
 
 {% block content %}
 
-<p><a href="{% url 'index' %}">← ко всем приложениям</a></p>
+<p><a href="{% url 'main:index' %}">← ко всем приложениям</a></p>
 
      <ul>
         {% for app in apps %}
-        <li><a href="{% url 'app_detail' app.id %}">{{app.name}}</a>
+        <li><a href="{% url 'main:app_detail' app.id %}">{{app.name}}</a>
         </li>
         {% empty %}
         <li>Приложений без категории пока нет</li>

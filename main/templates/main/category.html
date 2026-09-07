@@ -3,26 +3,26 @@
 {% block title %}{{ category.name }} — AppStore{% endblock %}
 
 {% block content %}
-    <p><a href="{% url 'index' %}">← ко всем приложениям</a></p>
+    <p><a href="{% url 'main:index' %}">← ко всем приложениям</a></p>
 
     <h2>Категория: {{ category.name }}</h2>
 
 
 
-  <a href="{% url 'app_detail' top_app.id %}">
+  <a href="{% url 'main:app_detail' top_app.id %}">
         Топ по цене в категории — {{ top_app.name }}
        :{{ top_app.price }}
     </a>
 
 <br>
 
- <a href="{%url 'category_free' category.id %}">Бесплатные внутри категории {{ category.name }}</a>
+ <a href="{%url 'main:category_free' category.id %}">Бесплатные внутри категории {{ category.name }}</a>
         <br>
 
     <ul>
     {% for app in apps %}
        <li>
-            <a href="{% url 'app_detail' app.id %}">{{ app.name }}</a> —
+            <a href="{% url 'main:app_detail' app.id %}">{{ app.name }}</a> —
             {% if app.price == 0 %}Бесплатно{% else %}{{ app.price }} ${% endif %}
         </li>
     {% empty %}
