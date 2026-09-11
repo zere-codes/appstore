@@ -38,7 +38,7 @@
         <a href="{%url 'main:cheap' %}"
         {% if request.path == '/cheap/'%}
         style="font-weight: bold" {% endif %}>Дешево</a>
-
+<a href="{% url 'main:free_apps' %}"{% if request.path == '/free_apps/' %} class="active"{% endif %}>Бесплатные</a><a href="{% url 'main:paid_apps' %}"{% if request.path == '/paid_apps/' %} class="active"{% endif %}>Платные</a>
 
     </nav>
 
