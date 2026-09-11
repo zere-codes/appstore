@@ -16,9 +16,6 @@ urlpatterns = [
     path('nocategory/', views.no_category, name='nocategory'),
     path('/category_free/<int:category_id>/', views.category_free, name='category_free'),
     path('cheap/', views.cheap, name='cheap'),
-    re_path(r'archive/(?P<year>[0-9]{4})/$', views.archive_year, name='archive'),
-    path('developer/<str:name>/', views.developer, name='developer'),
-    path('/app/secure/<uuid:key>/', views.secure, name='secure'),
 ]
 
 
