@@ -4,12 +4,7 @@
 
 {% block content %}
 
-       <p>Категория:
-        {% for category in categories %}
-            <a href="{% url 'main:category' category.id %}">{{ category.name }}</a>
-           ({{category.app_set.count}}){% if not forloop.last %} . {%endif%}
-        {% endfor %}
-       </p>
+
 
 
     {%if featured %}
@@ -55,7 +50,7 @@
     {% endif %}
 </p>
 
-<p>Всего найдено: {{ page_obj.paginator.count }}</p>
+<p>Всего приложений на странице: {{ page_obj.length }}</p>
 
 
 {% endblock %}
