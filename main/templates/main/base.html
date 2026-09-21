@@ -63,6 +63,7 @@
 
         Платные</a>
 
+        <a href="{% url 'main:add_app' %}">Добавить приложение</a>
 
     </nav>
 
@@ -75,9 +76,15 @@
     <button type="submit">Найти</button>
 </form>
 
-     {%if featured %}
-        <p>Приложение дня <strong><a href="{% url 'main:app_detail' featured.id %}">{{featured.name}}</a></strong></p>
+ {% if featured %}
+        <p>Приложение дня:
+            {% if featured.icon %}
+                <img src="{{ featured.icon.url }}" alt="" class="app-icon">
+            {% endif %}
+            <strong><a href="{% url 'main:app_detail' featured.id %}">{{ featured.name }}</a></strong>
+        </p>
     {% endif %}
+
     {% block content %}{% endblock %}
 
      <footer>Всего на сайте категорий {{categories_total}} и {{apps_total}} приложений.

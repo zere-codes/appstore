@@ -8,7 +8,8 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('about/', views.AboutView.as_view(), name='about'),
     path('app/<int:app_id>/', views.AppDetailView.as_view(), name='app_detail'),
-    path('app/<int:app_id>/review/', views.add_review, name='add_review'),    path('category/<int:category_id>/', views.category_detail, name='category'),
+    path('app/<int:app_id>/review/', views.add_review, name='add_review'),
+    path('category/<int:category_id>/', views.category_detail, name='category'),
     path('free/', views.free_apps, name='free'),
     path('new/', views.NewAppView.as_view(), name='new'),
     path('top/', views.top, name='top'),
@@ -21,6 +22,8 @@ urlpatterns = [
 
     path('api/app/<int:app_id>/', views.api_app_detail, name='api_app_detail'),
     path('apps_list/', views.AppsIsFreeListView.as_view(), name='apps_list'),
+    path('add_app/', views.add_app, name='add_app'),
+
 
 ]
 

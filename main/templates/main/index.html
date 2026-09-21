@@ -20,9 +20,13 @@
 
 
     <ul>
-        {% for app in page_obj %}
-        <li><strong><a href="{% url 'main:app_detail' app.id %}">{{app.name}}</a></strong> - {{ app.category }}
 
+{% for app in page_obj %}
+        <li>
+            {% if app.icon %}
+                <img src="{{ app.icon.url }}" alt="{{ app.name }}" class="app-icon">
+            {% endif %}
+            <strong><a href="{% url 'main:app_detail' app.id %}">{{ app.name }}</a></strong> - {{ app.category }}<br>
             {{ app.description|truncatechars:60 }}
 
             {% if app.price == 0 %}

@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST
 from django.http import JsonResponse, HttpResponse
 
 from django.views.generic import TemplateView, ListView, DetailView
-from .forms import ReviewForm
+from .forms import ReviewForm, AppForm
 SORTS = {
     'new': '-created_at',
     'name': 'name',
@@ -173,6 +173,19 @@ def api_app_detail(request, app_id):
         'price': app.price,
     }
     return JsonResponse(data)
+
+
+def add_app(request):
+   if request.method == 'POST':
+       form=AppForm(request.POST, request.FILES)
+       if form.is_valid():
+           app=form.save()
+           return redirect('main:app_detail', app_id=app.id)
+   else:
+       form=AppForm()
+   return render(request, 'main/app_detail.html', {'form': form})
+
+
 
 
 
