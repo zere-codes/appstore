@@ -10,59 +10,79 @@
 </head>
 <body>
     <h1>AppStore</h1>
-    <nav>
+    <nav class = 'menu'>
       <a href="{%url 'main:index' %}"
-        {% if request.path == ''%}
-        style="font-weight: bold" {% endif %}>Главная</a>
+
+        {% if request.resolver_match.url_name == 'index' and request.resolver_match.kwargs.index == index %}class="active"{% endif %}>
+
+      Главная</a>
 
         <a href="{%url 'main:about' %}"
-        {% if request.path == '/about/'%}
-        style="font-weight: bold" {% endif %}>О магазинах</a>
+
+        {% if request.resolver_match.url_name == 'about' and request.resolver_match.kwargs.free == free %}class="active"{% endif %}>
+
+        О магазинах</a>
 
       <a href="{%url 'main:free' %}"
-        {% if request.path == '/free/'%}
-        style="font-weight: bold" {% endif %}>Бесплатные</a>
+
+        {% if request.resolver_match.url_name == 'free' and request.resolver_match.kwargs.free == free %}class="active"{% endif %}>
+
+
+        Бесплатные</a>
 
         <a href="{%url 'main:new' %}"
-        {% if request.path == '/new/'%}
-        style="font-weight: bold" {% endif %}>Новинки</a>
+
+        {% if request.resolver_match.url_name == 'new' and request.resolver_match.kwargs.new == new %}class="active"{% endif %}>
+
+        Новинки</a>
 
         <a href="{%url 'main:top' %}"
-        {% if request.path == '/top/'%}
-        style="font-weight: bold" {% endif %}>Топ по цене</a>
+
+        {% if request.resolver_match.url_name == 'top' and request.resolver_match.kwargs.top == top %}class="active"{% endif %}>
+
+        Топ по цене</a>
 
         <a href="{%url 'main:nocategory' %}"
-        {% if request.path == '/nocategory/'%}
-        style="font-weight: bold" {% endif %}>Без категории</a>
+
+        {% if request.resolver_match.url_name == 'nocategory' and request.resolver_match.kwargs.nocategory == nocategory %}class="active"{% endif %}>
+
+    Без категории</a>
 
         <a href="{%url 'main:cheap' %}"
-        {% if request.path == '/cheap/'%}
-        style="font-weight: bold" {% endif %}>Дешево</a>
-<a href="{% url 'main:free_apps' %}"{% if request.path == '/free_apps/' %} class="active"{% endif %}>Бесплатные</a><a href="{% url 'main:paid_apps' %}"{% if request.path == '/paid_apps/' %} class="active"{% endif %}>Платные</a>
+
+        {% if request.resolver_match.url_name == 'cheap' and request.resolver_match.kwargs.cheap == cheap %}class="active"{% endif %}>
+
+        Дешево</a>
+        <a href="{% url 'main:free_apps' %}"
+
+           {% if request.resolver_match.url_name == 'free_apps' and request.resolver_match.kwargs.free_apps == free_apps %}class="active"{% endif %}>
+
+        Бесплатные</a>
+        <a href="{% url 'main:paid_apps' %}"
+       {% if request.resolver_match.url_name == 'paid_apps' and request.resolver_match.kwargs.paid_apps == paid_apps %}class="active"{% endif %}>
+
+        Платные</a>
+
 
     </nav>
 
-   <p class="categories-nav">
-        Категории:
-        {% for category in categories %}
-            <a href="{% url 'main:category' category.id %}"
-               {% if request.resolver_match.url_name == 'category' and request.resolver_match.kwargs.category_id == category.id %}class="active"{% endif %}>
-                {{ category.name }}
-            </a>
-            ({{ category.apps_count }}){% if not forloop.last %} · {% endif %}
-        {% empty %}
-            пока нет
-        {% endfor %}
-    </p>
+    <p> {% include 'main/categories_nav.html' %} </p>
+
 
    <form method="GET" action="{% url 'main:index' %}">
     <input type="text" name="q" placeholder="Поиск приложений..." value="{{ q }}">
 
     <button type="submit">Найти</button>
 </form>
+
+     {%if featured %}
+        <p>Приложение дня <strong><a href="{% url 'main:app_detail' featured.id %}">{{featured.name}}</a></strong></p>
+    {% endif %}
     {% block content %}{% endblock %}
 
-     <footer>Всего на сайте категорий {{categories_total}} и {{apps_total}} приложений</footer>
+     <footer>Всего на сайте категорий {{categories_total}} и {{apps_total}} приложений.
+         Всего отзывов в приложении {{reviews_total}}</footer>
+
 
 </body>
 </html>

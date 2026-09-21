@@ -1,15 +1,21 @@
 from django.db.models import Count
-from .models import App, Category
+from .models import App, Category, Review
 
 
 def store_menu(request):
     categories = list(
         Category.objects
-        .annotate(apps_count=Count('app'))
+        .annotate(apps_count=Count('app')).filter(apps_count__gt =0)
         .order_by('name')
     )
+    featured = App.objects.order_by('-price').first()
+
+
     return {
         'categories': categories,
         'apps_total': App.objects.count(),
         'categories_total': len(categories),
+        'reviews_total': Review.objects.count(),
+        'featured': featured,
     }
+

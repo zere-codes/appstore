@@ -38,6 +38,11 @@ form{
     text-decorations:underline;
 }
 
+.menu a.active{
+    font-weight: bold;
+    text-decorations:underline;
+}
+
 footer {
     margin-top: 40px;
     padding-top: 20px;
