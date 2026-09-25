@@ -25,7 +25,10 @@
         <li>
             {% if app.icon %}
                 <img src="{{ app.icon.url }}" alt="{{ app.name }}" class="app-icon">
+            {%else%}
+             <p>Нет</p>
             {% endif %}
+
             <strong><a href="{% url 'main:app_detail' app.id %}">{{ app.name }}</a></strong> - {{ app.category }}<br>
             {{ app.description|truncatechars:60 }}
 

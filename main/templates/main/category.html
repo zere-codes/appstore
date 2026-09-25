@@ -21,7 +21,9 @@
 
     <ul>
     {% for app in apps %}
+
        <li>
+            <p> {% include 'main/app_list_item.html' %} </p>
             <a href="{% url 'main:app_detail' app.id %}">{{ app.name }}</a> —
             {% if app.price == 0 %}Бесплатно{% else %}{{ app.price }} ${% endif %}
         </li>

@@ -166,11 +166,15 @@ def add_review(request, app_id):
 
 def api_app_detail(request, app_id):
     app= get_object_or_404(App, id=app_id)
+    icon=get_object_or_404(App, app.icon.url )
+
+
     data={
         'id': app_id,
         'name': app.name,
         'description': app.description,
         'price': app.price,
+        'icon': get_object_or_404(App, icon.url if app.icon else None)
     }
     return JsonResponse(data)
 
@@ -183,7 +187,7 @@ def add_app(request):
            return redirect('main:app_detail', app_id=app.id)
    else:
        form=AppForm()
-   return render(request, 'main/app_detail.html', {'form': form})
+   return render(request, 'main/add_app.html', {'form': form})
 
 
 

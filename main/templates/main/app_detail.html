@@ -24,6 +24,7 @@
 
     <p>Примерно по такой цене:</p>
     {% for app in similar %}
+         <p> {% include 'main/app_list_item.html' %} </p>
         <a href="{% url 'main:app_detail' app.id %}">{{ app.name }}</a>
         <br>
     {% endfor %}

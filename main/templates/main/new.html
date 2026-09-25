@@ -8,7 +8,12 @@
 
     <ul>
         {% for app in apps %}
-        <li>><a href="{% url 'main:app_detail' app.id %}">{{app.name}}</a> -
+
+        <li>
+            <p> {% include 'main/app_list_item.html' %} </p>
+            <a href="{% url 'main:app_detail' app.id %}">{{app.name}}</a>
+
+
             добавлено: {{ app.created_at|date:"d.m.Y"}}
             {% if app.price == 0 %}
                 Бесплатно

@@ -1,0 +1,25 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'main/style.css' %}"   >
+
+</head>
+<body>
+   {% if app.icon %}
+                <img src="{{ app.icon.url }}" alt="{{ app.name }}" class="app-icon">
+   {%else%}
+
+   {% endif %}
+
+
+
+ {% block content %}{% endblock %}
+
+
+
+</body>
+</html>
