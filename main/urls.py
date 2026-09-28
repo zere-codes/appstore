@@ -25,6 +25,12 @@ urlpatterns = [
     path('add_app/', views.add_app, name='add_app'),
 
 
+
+    path('register/', views.register, name='register'),
+    path('login/', views.StrongLoginView.as_view(), name='login'),
+    path('logout/', views.StrongLogoutView.as_view(), name='logout'),
+
+
 ]
 
 
