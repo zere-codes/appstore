@@ -30,9 +30,23 @@
     {% endfor %}
 
 
+<p>Автор:
+        {% if app.author %}
+            {{ app.author.username }}
+        {% else %}
+            не указан
+        {% endif %}
+    </p>
 
+{% if user.is_authenticated %}
+        {% if user.is_staff or app.author_id == user.id %}
+            <p><a href="{% url 'main:edit_app' app.id %}">Редактировать</a></p>
+        {% endif %}
+    {% endif %}
 
     <p>Добавлено: {{app.created_at|date:"d.m.Y H:i"}}</p>
+
+
 
     <section>
     <h2>Отзывы ({{ reviews|length }})</h2>

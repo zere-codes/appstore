@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # Create your models here.
 
 class Category(models.Model):
@@ -20,13 +20,15 @@ class App(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     category=models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
     icon = models.ImageField(upload_to='icons/', blank=True)
-
+    author =models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='apps',)
     def __str__(self):
         return self.name
 
     class Meta:
         verbose_name = 'Приложение'
         verbose_name_plural = 'Приложения'
+
+
 
 
 class Review(models.Model):
