@@ -14,7 +14,8 @@ from django.urls import reverse_lazy
 from django.http import JsonResponse, HttpResponse
 
 from django.views.generic import TemplateView, ListView, DetailView
-from .forms import ReviewForm, AppForm, RegisterForm
+from .forms import ReviewForm, AppForm, RegisterForm, AppSuperUserForm
+
 SORTS = {
     'new': '-created_at',
     'name': 'name',
@@ -252,18 +253,27 @@ def edit_app(request, app_id):
     app = get_object_or_404(App, id=app_id)
     if not request.user.is_staff and app.author_id != request.user.id:
         messages.error(request, 'Редактировать карточку может только её автор.')
-        return redirect('main:app_detail', app_id=app.id)
+        return  redirect('main:app_detail', app_id=app.id)
 
 
 
 
     if request.method == 'POST':
-        form = AppForm(request.POST, request.FILES, instance=app)
+
+        if request.user.is_superuser:
+            form = AppSuperUserForm(request.POST, request.FILES, instance=app)
+
+        else:
+            form = AppForm(request.POST, request.FILES, instance=app)
+
         if form.is_valid():
             form.save()
             messages.success(request, f'Карточка «{app.name}» обновлена.')
             return redirect('main:app_detail', app_id=app.id)
     else:
-        form = AppForm(instance=app)
+        if request.user.is_superuser:
+            form = AppSuperUserForm(instance=app)
+        else:
+            form = AppForm(instance=app)
     return render(request, 'main/edit_app.html', {'form': form, 'app': app})
 

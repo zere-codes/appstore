@@ -49,6 +49,16 @@ class AppForm(forms.ModelForm):
             'icon':'Иконка',
         }
 
+class AppSuperUserForm(AppForm):
+    class Meta(AppForm.Meta):
+        fields = ['name', 'description', 'price', 'category', 'icon', 'author']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['author'].label = 'Автор'
+
+
+
 
 class RegisterForm(UserCreationForm):
     class Meta :
