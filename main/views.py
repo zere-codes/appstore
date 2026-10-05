@@ -16,7 +16,7 @@ from django.contrib.auth.views import (
     PasswordResetCompleteView,
 )
 from django.contrib import messages
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 
 from django.http import JsonResponse, HttpResponse
 
@@ -49,10 +49,18 @@ def index(request):
     page_number=request.GET.get('page')
     page_obj=paginator.get_page(page_number)
 
+    is_favorited=False
+    for app in apps:
+        if request.user.is_authenticated and app.favorited_by.filter(id=request.user.id).exists():
+            is_favorited=True
+
+
+
     return render(request, 'main/index.html', {
         'q': q,
         'sort': sort,
         'page_obj': page_obj,
+        'is_favorited': is_favorited,
 
     })
 
@@ -93,6 +101,10 @@ class AppDetailView(DetailView):
             form.fields.pop('username')
         context['form'] = form
         context['reviews'] = app.review_set.order_by('-created_at')
+        context['is_favorite'] = (
+            self.request.user.is_authenticated
+            and app.favorited_by.filter(pk=self.request.user.pk).exists()
+        )
         return context
 
 
@@ -188,6 +200,9 @@ def add_review(request, app_id):
         'form': form,
         'reviews': reviews,
         'similar_apps': similar_apps,
+        'is_favorite':request.user.is_authenticated
+            and app.favorite_by.filter(pk=request.user.pk).exists()
+
     })
 
 def api_app_detail(request, app_id):
@@ -320,3 +335,36 @@ class StorePasswordResetConfirmView(PasswordResetConfirmView):
 
 class StorePasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'main/password_reset_complete.html'
+
+
+
+
+@login_required
+def favorites(request):
+    apps=request.user.favorite_apps.select_related('category', 'author').order_by('name')
+    return render(request, 'main/favorites.html', {'apps': apps})
+
+
+
+
+
+
+def toggle_favorite(request, app_id):
+    app=get_object_or_404(App, id=app_id)
+
+    if not request.user.is_authenticated:
+        login_url=reverse('main:login')
+        next_url=reverse('main:app_detail', args=[app_id])
+        return redirect(f"{login_url}?next={next_url}")
+
+    if app.favorited_by.filter(pk=request.user.pk).exists():
+        app.favorited_by.remove(request.user)
+        messages.success(request, f"{app.name} - убрано из избранного")
+
+    else:
+        app.favorited_by.add(request.user)
+        messages.success(request, f"{app.name} - добавили в избранное")
+
+    return redirect('main:app_detail', app_id=app.id)
+
+
