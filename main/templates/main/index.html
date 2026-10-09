@@ -3,76 +3,72 @@
 {% block title %}Главная - AppStore{% endblock %}
 
 {% block content %}
+    {% if featured %}
+        <p>Приложение дня:
+            {% if featured.icon %}
+                <img src="{{ featured.icon.url }}" alt="" class="app-icon">
+            {% endif %}
+            <strong><a href="{% url 'main:app_detail' featured.id %}">{{ featured.name }}</a></strong>
+        </p>
+    {% endif %}
 
+    <h2>Приложения в магазине</h2>
 
-
-
-
-<h2>Приложения в магазине</h2>
-
-<p>
-    <a href="?sort=new{% if q %}&q={{q}}{%endif%}">новые</a>
-    <a href="?sort=name{% if q %}&q={{q}}{%endif%}">по названию</a>
-    <a href="?sort=price{% if q %}&q={{q}}{%endif%}">сначала дешевые</a>
-    <a href="?sort=expensive{% if q %}&q={{q}}{%endif%}">сначала дорогие</a>
-</p>
-
-
+    <p>
+        <a href="?sort=new{% if q %}&q={{ q }}{% endif %}">новые</a>
+        <a href="?sort=name{% if q %}&q={{ q }}{% endif %}">по названию</a>
+        <a href="?sort=price{% if q %}&q={{ q }}{% endif %}">сначала дешёвые</a>
+        <a href="?sort=expensive{% if q %}&q={{ q }}{% endif %}">сначала дорогие</a>
+        <a href="?sort=rating{% if q %}&q={{ q }}{% endif %}">сначала лучшие</a>
+    </p>
 
     <ul>
-
-{% for app in page_obj %}
+        {% for app in page_obj %}
         <li>
             {% if app.icon %}
-                <img src="{{ app.icon.url }}" alt="{{ app.name }}" class="app-icon">
-            {%else%}
-             <p>Нет</p>
+                <img src="{{ app.icon.url }}" alt="" class="app-icon">
             {% endif %}
-
             <strong><a href="{% url 'main:app_detail' app.id %}">{{ app.name }}</a></strong> - {{ app.category }}<br>
-            {{ app.description|truncatechars:60 }}
-
+            {{ app.description|truncatechars:60 }}<br>
             {% if app.price == 0 %}
                 Бесплатно
             {% else %}
                 {{ app.price }} $
             {% endif %}
-
+            -
+            {% if app.rating_count %}
+                оценка: {{ app.rating_avg }} ({{ app.rating_count }})
+            {% else %}
+                нет оценок
+            {% endif %}
             <p>Автор:
-        {% if app.author %}
-            {{ app.author.username }}
-        {% else %}
-            не указан
-        {% endif %}
-    </p>
-
-            {% if is_favorited %}
-            <strong>в избранном</strong>
-        {% endif %}
-
-
-
-
-
+                {% if app.author %}
+                    {{ app.author.username }}
+                {% else %}
+                    не указан
+                {% endif %}<br>
+            </p>
         </li>
         {% empty %}
         <li>Приложений пока нет</li>
         {% endfor %}
     </ul>
 
-<p>
-    {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}&sort={{ sort }}&q={{ q }}">← назад</a>
-    {% endif %}
+    <p>
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&sort={{ sort }}&q={{ q }}"><- back</a>
+        {% else %}
+            <- back
+        {% endif %}
 
-    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+        Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
 
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}&sort={{ sort }}&q={{ q }}">вперёд →</a>
-    {% endif %}
-</p>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&sort={{ sort }}&q={{ q }}">next -></a>
+        {% else %}
+            next ->
+        {% endif %}
+    </p>
 
-
-
-
+    <p>Всего приложений на странице: {{ page_obj|length }}</p>
 {% endblock %}

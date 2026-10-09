@@ -29,7 +29,7 @@ SORTS = {
     'new': '-created_at',
     'name': 'name',
     'price': 'price',
-    'expensive': '-price'
+    'expensive': '-price',
 }
 
 def index(request):
@@ -41,27 +41,23 @@ def index(request):
     else:
         apps = App.objects.all()
 
-    apps = apps.select_related('author').order_by(SORTS.get(sort, '-created_at'))
+    apps = apps.select_related('author')
+    if sort == 'rating':
+        apps = apps.order_by('-rating_avg', '-rating_count', 'name')
+    else:
+        apps = apps.order_by(SORTS.get(sort, '-created_at'))
 
-    categories = Category.objects.all()
+    featured = App.objects.order_by('-price').first()
 
     paginator = Paginator(apps, 3)
-    page_number=request.GET.get('page')
-    page_obj=paginator.get_page(page_number)
-
-    is_favorited=False
-    for app in apps:
-        if request.user.is_authenticated and app.favorited_by.filter(id=request.user.id).exists():
-            is_favorited=True
-
-
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     return render(request, 'main/index.html', {
         'q': q,
         'sort': sort,
         'page_obj': page_obj,
-        'is_favorited': is_favorited,
-
+        'featured': featured,
     })
 
 
