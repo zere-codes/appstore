@@ -67,6 +67,10 @@
 
 
              {% if user.is_authenticated %}
+
+                {%if user.is_staff%}
+        <a href="{%url 'main:sale'%}">Распродажа</a>
+            {%endif%}
          <a href="{% url 'main:my_apps' %}"
        {% if request.resolver_match.url_name == 'my_apps' and request.resolver_match.kwargs.my_apps == my_apps %}class="active"{% endif %}>
 
