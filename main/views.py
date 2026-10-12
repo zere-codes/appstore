@@ -26,10 +26,10 @@ from .forms import ReviewForm, AppForm, RegisterForm, AppSuperUserForm
 
 
 SORTS = {
-    'new': '-created_at',
-    'name': 'name',
-    'price': 'price',
-    'expensive': '-price',
+    'new': ('-created_at', 'pk'),
+    'name': ('name', 'pk'),
+    'price': ('price', 'pk'),
+    'expensive': ('-price', 'pk'),
 }
 
 def index(request):
@@ -42,10 +42,11 @@ def index(request):
         apps = App.objects.all()
 
     apps = apps.select_related('author')
+
     if sort == 'rating':
-        apps = apps.order_by('-rating_avg', '-rating_count', 'name')
+        apps = apps.order_by('-rating_avg', '-rating_count', 'name', 'pk')
     else:
-        apps = apps.order_by(SORTS.get(sort, '-created_at'))
+        apps = apps.order_by(*SORTS.get(sort, ('-created_at', 'pk')))
 
     featured = App.objects.order_by('-price').first()
 
@@ -84,13 +85,7 @@ class AppDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         app = self.object
 
-        context['similar'] = (
-            App.objects.filter(
-                price__gte=app.price - 10,
-                price__lte=app.price + 10,
-            )
-            .exclude(id=app.id)[:3]
-        )
+        context['similar'] = app.similar_by_price()
 
         form = ReviewForm()
         if self.request.user.is_authenticated and 'username' in form.fields:
@@ -179,18 +174,12 @@ def add_review(request, app_id):
         review.app = app
         review.save()
         messages.success(request, 'Отзыв сохранён.')
-        return redirect('main:app_detail', app_id=app.id)
+        return redirect(app.get_absolute_url())
 
     if request.user.is_authenticated and 'username' in form.fields:
         form.fields.pop('username')
     reviews = app.review_set.order_by('-created_at')
-    similar_apps = (
-        App.objects.filter(
-            price__gte=app.price - 10,
-            price__lte=app.price + 10,
-        )
-        .exclude(id=app.id)[:3]
-    )
+    similar_apps = app.similar_by_price()
     return render(request, 'main/app_detail.html', {
         'app': app,
         'form': form,
@@ -350,7 +339,7 @@ def toggle_favorite(request, app_id):
 
     if not request.user.is_authenticated:
         login_url=reverse('main:login')
-        next_url=reverse('main:app_detail', args=[app_id])
+        next_url=app.get_absolute_url()
         return redirect(f"{login_url}?next={next_url}")
 
     if app.favorited_by.filter(pk=request.user.pk).exists():

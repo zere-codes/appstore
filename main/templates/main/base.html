@@ -108,7 +108,7 @@
             {% if featured.icon %}
                 <img src="{{ featured.icon.url }}" alt="" class="app-icon">
             {% endif %}
-            <strong><a href="{% url 'main:app_detail' featured.id %}">{{ featured.name }}</a></strong>
+            <strong><a href="{{featured.get_absolute_url}}">{{ featured.name }}</a></strong>
         </p>
     {% endif %}
 

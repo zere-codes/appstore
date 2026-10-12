@@ -22,6 +22,8 @@
 
     <p>{{app.description|default:"описание пока не добавлено"}}</p>
 
+
+    <p><strong>Цена: {{app.price_label}}</strong></p>
     <p>Примерно по такой цене:</p>
     {% for app in similar %}
          <p> {% include 'main/app_list_item.html' %} </p>
