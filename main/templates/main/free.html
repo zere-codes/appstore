@@ -8,9 +8,9 @@
 
      <ul>
         {% for app in apps %}
-        <li><a href="{% url 'main:app_detail' app.id %}">{{app.name}}</a>
-
-
+        <li><a href="{{app.get_absolute_url}}">{{app.name}}</a>
+            <br>
+        Бесплатно
         </li>
         {% empty %}
         <li>Бесплатных приложений пока нет</li>

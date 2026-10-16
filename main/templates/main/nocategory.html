@@ -8,7 +8,7 @@
 
      <ul>
         {% for app in apps %}
-        <li><a href="{% url 'main:app_detail' app.id %}">{{app.name}}</a>
+        <li><a href="{{app.get_absolute_url}}">{{app.name}}</a>
         </li>
         {% empty %}
         <li>Приложений без категории пока нет</li>

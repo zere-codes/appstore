@@ -11,15 +11,11 @@
 
         <li>
             <p> {% include 'main/app_list_item.html' %} </p>
-            <a href="{% url 'main:app_detail' app.id %}">{{app.name}}</a>
+            <a href="{{app.get_absolute_url}}">{{app.name}}</a>
 
 
             добавлено: {{ app.created_at|date:"d.m.Y"}}
-            {% if app.price == 0 %}
-                Бесплатно
-            {% else %}
-                {{ app.price }} $
-            {% endif %}
+            {{app.price_label}}
         </li>
         {% empty %}
         <li>Приложений пока нет</li>
