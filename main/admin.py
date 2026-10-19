@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import Category, App, Review
+from .models import Category, App, Review, Purchase
 # Register your models here.
 
 admin.site.register(Category)
 
-admin.site.register(Review)
+
 
 @admin.register(App)
 class AppAdmin(admin.ModelAdmin):
@@ -14,7 +14,13 @@ class AppAdmin(admin.ModelAdmin):
     list_filter=('category',)
     filter_horizontal=('favorited_by',)
 
+admin.site.register(Review)
 
+
+@admin.register(Purchase)
+class PurchaseAdmin(admin.ModelAdmin):
+    list_display = ('user', 'app', 'price_paid', 'purchased_at' )
+    list_filter=('app', 'user')
 
 
 

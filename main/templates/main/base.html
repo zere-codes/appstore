@@ -75,7 +75,7 @@
        {% if request.resolver_match.url_name == 'my_apps' and request.resolver_match.kwargs.my_apps == my_apps %}class="active"{% endif %}>
 
         Мои приложения</a>
-
+        <a href="{% url 'main:purchases' %}">Мои покупки</a>
             <a href="{% url 'main:add_app' %}">Добавить приложение</a>
             <span>Вы вошли как <strong>{{ user.username }}</strong></span>
             <form method="post" action="{% url 'main:logout' %}" style="display:inline;">
@@ -123,6 +123,22 @@
      <footer>Всего на сайте категорий {{categories_total}} и {{apps_total}} приложений.
          Всего отзывов в приложении {{reviews_total}}</footer>
 
-
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

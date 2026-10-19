@@ -1,8 +1,8 @@
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import App, Category, Review
+from .models import App, Category, Review, Purchase
 
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth import login
@@ -96,12 +96,13 @@ class AppDetailView(DetailView):
             self.request.user.is_authenticated
             and app.favorited_by.filter(pk=self.request.user.pk).exists()
         )
+        context['purchase']=app.purchase_of(self.request.user)
         return context
 
 
 def category_detail(request,category_id):
     category=get_object_or_404(Category, id=category_id)
-    apps=App.objects.filter(category=category)
+    apps=App.objects.filter(category=category).defer('description',)
     top_app=apps.order_by('-price').first()
     return render(request, 'main/category.html', {
         'category':category,
@@ -124,6 +125,9 @@ class NewAppView(ListView):
     ordering = ['-created_at']
     paginate_by = 3
 
+    def get_queryset(self):
+        return App.objects.newest()
+
 def top(request):
     apps = App.objects.exclude(price=0).order_by('-price')[:11]
     return render(request,'main/top.html',{'apps':apps})
@@ -133,12 +137,12 @@ def no_category(request):
     return render(request,'main/nocategory.html',{'apps':apps})
 
 def category_free(request, category_id):
-    category = Category.objects.get(id=category_id)
-    apps = App.objects.filter(category=category, price=0)
+    category = get_object_or_404(Category, id=category_id)
+    apps = category.app_set.free()
     return render(request, 'main/category_free.html', {'apps': apps})
 
 def cheap(request):
-    apps = App.objects.filter(price__gt=0, price__lt=100).order_by('price')
+    apps = App.objects.cheap()
     return render(request, 'main/cheap.html', {'apps': apps})
 
 
@@ -150,8 +154,8 @@ class AppsIsFreeListView(ListView):
 
     def get_queryset(self):
         if self.kwargs.get('is_free'):
-            return App.objects.filter(price=0)
-        return App.objects.filter(price__gt=0)
+            return App.objects.free()
+        return App.objects.paid()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -186,7 +190,8 @@ def add_review(request, app_id):
         'reviews': reviews,
         'similar_apps': similar_apps,
         'is_favorite':request.user.is_authenticated
-            and app.favorite_by.filter(pk=request.user.pk).exists()
+            and app.favorite_by.filter(pk=request.user.pk).exists(),
+        'purchase': app.purchase_of(request.user),
 
     })
 
@@ -363,8 +368,86 @@ def sale(request):
         messages.success(request, f"Скидка 10% применена к платным приложениям: {updated}")
         return redirect('main:index')
 
-    paid_count=App.objects.filter(price__gt=0).count()
+    paid_count=App.objects.paid().count()
     return render(request, 'main/sale.html', {paid_count:paid_count})
+
+
+
+@login_required
+def close_category(request, category_id):
+    source = get_object_or_404(Category, id=category_id)
+
+    if not request.user.is_staff:
+        messages.error(
+            request,
+            'Категорию может закрыть только сотрудник магазина'
+        )
+        return redirect('main:index')
+
+    targets = Category.objects.exclude(pk=source.pk).order_by('name')
+    apps_count = App.objects.in_category(source).count()
+
+    if request.method == 'POST':
+        target_id = request.POST.get('target_id')
+
+        target = get_object_or_404(
+            Category.objects.exclude(pk=source.pk),
+            pk=target_id
+        )
+
+        from django.db import transaction
+
+        with transaction.atomic():
+            App.objects.in_category(source).update(category=target)
+            source.delete()
+
+        messages.success(request, 'Категория закрыта, приложения перенесены.')
+        return redirect('main:index')
+
+    return render(request, 'main/close_category.html', {
+        'source': source,
+        'targets': targets,
+        'apps_count': apps_count,
+    })
+
+
+
+@require_POST
+def buy_app(request, app_id):
+    app = get_object_or_404(App, id=app_id)
+
+    if not request.user.is_authenticated:
+        login_url=reverse('main:login')
+        return redirect(f"{login_url}?next={app.get_absolute_url()}")
+
+    if app.author_id==request.user.id:
+        messages.error(request, 'Это ваше приложение, покупать его вам не нужно')
+        return redirect(app.get_absolute_url())
+
+    if app.purchase_of(request.user) is not None:
+        messages.info(request, f'{app.name} уже есть в ваших покупках')
+        return redirect(app.get_absolute_url())
+
+    app.buyers.add(request.user, through_defaults={'price_paid':app.price})
+    messages.success(request, f"Покупка оформлена: {app.name}, {app.price_label}")
+    return redirect(app.get_absolute_url())
+
+
+
+@login_required
+def purchases(request):
+    items = (
+        Purchase.objects.filter(user=request.user)
+        .select_related('app')
+        .only('price_paid', 'purchased_at', 'app__name', 'app__price')
+        .order_by('-purchased_at')
+    )
+    total = items.aggregate(total=Sum('price_paid'))['total'] or 0
+    return render(request, 'main/purchases.html', {
+        'purchases': items,
+        'total': total,
+    })
+
 
 
 

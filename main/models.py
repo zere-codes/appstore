@@ -4,7 +4,7 @@ from decimal import Decimal, ROUND_HALF_UP
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
+from django.db import models, transaction
 from django.urls import reverse
 
 
@@ -29,6 +29,36 @@ class Category(models.Model):
         verbose_name_plural= 'Категории'
 
 
+
+class AppQuertySet(models.QuerySet):
+    def free(self):
+        return self.filter(price=0)
+
+    def paid(self):
+        return self.filter(price__gt=0)
+
+    def cheap(self):
+        return self.paid().filter(price__lt=100).order_by('price')
+
+    def newest(self):
+        return self.order_by('-created_at')
+
+    def in_category(self, category):
+        return self.filter(category=category)
+
+
+class AppManager(models.Manager.from_queryset(AppQuertySet)):
+    def move_to_category(self, source, target):
+        if source.pk is None or target.pk is None or source.pk==target.pk:
+            raise ValueError("Нельзя перенести приложение в ту же категорию")
+        with transaction.atomic():
+            moved =self.model.objects.in_category(source).update(category=target)
+            source.delete()
+        return moved
+
+
+
+
 class App(models.Model):
     name=models.CharField(max_length=100)
     description=models.TextField(blank=True)
@@ -41,7 +71,13 @@ class App(models.Model):
     rating_avg=models.DecimalField(max_digits=2, decimal_places=1, default=0, editable=False, verbose_name='Средняя оценка')
     rating_count=models.PositiveIntegerField(default=0, editable=False, verbose_name="Число оценок")
 
-
+    buyers = models.ManyToManyField(
+        User,
+        through='Purchase',
+        related_name='purchased_apps',
+        verbose_name='Купили',
+    )
+    objects=AppManager()
 
     def __str__(self):
         return self.name
@@ -60,13 +96,17 @@ class App(models.Model):
             price__lte=self.price + 10,
         ).exclude(pk=self.pk)[:3]
 
+    def purchase_of(self, user):
+        if not user.is_authenticated:
+            return None
+        return self.purchases.filter(user=user).first()
 
     @classmethod
     def discount_paid(cls, percent):
         if type(percent) is not int or not 1<=percent<=90:
             raise ValueError('Скидка должна быть целым числом от 1 до 90')
         factor=(Decimal(100)-Decimal(percent))/Decimal(100)
-        paid=list(cls.objects.filter(price__gt=0))
+        paid=list(cls.objects.paid())
         for app in paid:
             app.price=(app.price*factor).quantize(
                 Decimal('0.01'),
@@ -106,7 +146,33 @@ class Review(models.Model):
         return f"{self.username}>{self.app.name}"
 
 
+class Purchase(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE, related_name='purchases')
+    app=models.ForeignKey(App, on_delete=models.CASCADE, related_name='purchases')
+    price_paid= models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        validators=[validate_non_negative_price],
+        verbose_name='Уплачено'
+    )
 
+    purchased_at=models.DateTimeField(auto_now_add=True, verbose_name='Дата покупки')
+
+    class Meta:
+        verbose_name='Покупки'
+        verbose_name_plural='Покупки'
+        constraints=[
+            models.UniqueConstraint(fields=['user', 'app'], name='unique_purchase_user_app'),
+
+        ]
+
+    def __str__(self):
+        return f"{self.user} - {self.app}"
+
+    def price_label(self):
+        if self.price_paid==0:
+            return "Бесплатно"
+        return f'{self.price_paid}$'
 
 
 
