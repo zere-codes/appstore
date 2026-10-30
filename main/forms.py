@@ -83,6 +83,7 @@ class RegisterForm(UserCreationForm):
 
 
 class PriceFilterForm(forms.Form):
+    
     price_min = forms.DecimalField(label='Цена от', required=False)
     price_max = forms.DecimalField(label='Цена до', required=False)
     sort = forms.ChoiceField(

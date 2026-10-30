@@ -11,6 +11,9 @@
         <li><a href="{{app.get_absolute_url}}">{{app.name}}</a> -
 
         {{app.price }}
+              {%if app.price_before_sale%}
+        <s>{{app.price_before_sale}}</s>
+    {%endif%}
         </li>
         {% empty %}
         <li>Платных приложений пока нет</li>

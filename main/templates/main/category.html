@@ -11,8 +11,18 @@
         <p><a href="{% url 'main:close_category' category.id %}">Закрыть категорию</a></p>
     {% endif %}
 
-<form method="get">
-    {{form.as_p}}
+
+
+<form method="get" class="category_sort">
+
+    <div class = 'h1'>
+   {% for field in form %}
+    <div class="h2">
+        {{ field.label_tag }}
+        {{ field }}
+    </div>
+    {%endfor%}
+    </div>
     <button type="submit">Подобрать</button>
 </form>
 
@@ -34,6 +44,9 @@
             <p> {% include 'main/app_list_item.html' %} </p>
             <a href="{% url 'main:app_detail' app.id %}">{{ app.name }}</a> —
             {{app.price_label}}
+             {%if app.price_before_sale%}
+        <s>{{app.price_before_sale}}</s>
+    {%endif%}
         </li>
     {% empty %}
         <li>В этой категории пока пусто.</li>

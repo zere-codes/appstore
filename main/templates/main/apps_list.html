@@ -13,6 +13,9 @@
         <p>{{ app.description|truncatechars:100 }}</p>
         <p>
             {{app.price_label}}
+              {%if app.price_before_sale%}
+        <s>{{app.price_before_sale}}</s>
+    {%endif%}
             
         </p>
 

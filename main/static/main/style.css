@@ -64,10 +64,21 @@ footer {
     height:48px;
     object-fit: cover;
     border-radius:10px;
-    vertical-align:middle:
+    vertical-align:middle;
     margin-right:9px;
 }
 
 
+.category_sort{
+    display: flex;
+}
+.h1{
+    display: flex;
+    flex-direction: row;
+}
+.h2{
+    display: flex;
+    flex-direction: row;
+}
 
 
