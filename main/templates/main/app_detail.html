@@ -1,5 +1,5 @@
 {% extends 'main/base.html' %}
-
+{%load store_tags%}
 {% block title %}{{app.name}}-Appstore{% endblock %}
 
 {% block content %}
@@ -23,7 +23,14 @@
     <p>{{app.description|default:"описание пока не добавлено"}}</p>
 
 
-    <p><strong>Цена: {{app.price_label}}</strong></p>
+    <p><strong>Цена: {{app.price_label}}</strong>
+    {%if app.price_before_sale%}
+        <s>{{app.price_before_sale}}</s>
+    {%endif%}
+
+    </p>
+
+
     <p>Примерно по такой цене:</p>
     {% for app in similar %}
          <p> {% include 'main/app_list_item.html' %} </p>
@@ -31,6 +38,9 @@
         <br>
     {% endfor %}
 
+{% if app.rating_count %}
+    оценка {{ app.rating_avg|stars }} {{ app.rating_avg }} ({{ app.rating_count }})
+{%endif%}
 
 <p>Автор:
         {% if app.author %}
@@ -89,7 +99,7 @@
 
         <p>
             {% if app.rating_count %}
-                Средняя оценка: {{ app.rating_avg }} из 5 (отзывов: {{ app.rating_count }})
+                Средняя оценка: {{ app.rating_avg|stars }} из 5 (отзывов: {{ app.rating_count }})
             {% else %}
                 Оценок пока нет
             {% endif %}
@@ -99,7 +109,7 @@
         <article>
             <p>
                 <strong>{{ review.username }}</strong>
-                — оценка: {{ review.stars }}/5
+                — оценка: {{ review.stars|stars }}
                 —
                 {% if review.recommended %}
                     Рекомендует
@@ -136,6 +146,3 @@
 </section>
 
 {% endblock %}
-
-
-
