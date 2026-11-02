@@ -25,6 +25,7 @@ urlpatterns = [
     path('apps_list/', views.AppsIsFreeListView.as_view(), name='apps_list'),
     path('add_app/', views.add_app, name='add_app'),
     path('my_apps/', views.my_apps, name='my_apps'),
+    path('my_apps/prices/', views.my_prices, name='my_prices'),
 
 
 

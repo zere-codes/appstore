@@ -83,7 +83,6 @@ class RegisterForm(UserCreationForm):
 
 
 class PriceFilterForm(forms.Form):
-    
     price_min = forms.DecimalField(label='Цена от', required=False)
     price_max = forms.DecimalField(label='Цена до', required=False)
     sort = forms.ChoiceField(
@@ -103,8 +102,4 @@ class PriceFilterForm(forms.Form):
         if price_min is not None and price_max is not None and price_min > price_max:
             raise forms.ValidationError('Цена "от" не может быть больше цены "до"')
         return cleaned_data
-
-
-
-
 
