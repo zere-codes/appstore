@@ -287,18 +287,25 @@ AppPriceFormSet = modelformset_factory(
 @login_required
 def my_prices(request):
     apps = App.objects.filter(author=request.user).order_by('name')
+    removed=0
     if request.method == "POST":
         formset = AppPriceFormSet(request.POST, queryset=apps)
+
         if formset.is_valid():
             for form in formset:
                 if 'price' in form.changed_data:
                     form.instance.price_before_sale = None
+                    removed=removed+1
+
             saved = formset.save()
-            messages.success(request, f"Изменено карточек: {len(saved)}")
+            messages.success(request, f"Изменено карточек: {len(saved)},снято с распродажи: {removed}")
             return redirect('main:my_apps')
     else:
         formset = AppPriceFormSet(queryset=apps)
     return render(request, 'main/my_prices.html', {'formset': formset})
+
+
+
 
 
 @login_required
@@ -314,7 +321,6 @@ def edit_app(request, app_id):
         return redirect('main:app_detail', app_id=app.id)
 
     if request.method == 'POST':
-
         if request.user.is_superuser:
             form = AppSuperUserForm(request.POST, request.FILES, instance=app)
 
@@ -322,6 +328,8 @@ def edit_app(request, app_id):
             form = AppForm(request.POST, request.FILES, instance=app)
 
         if form.is_valid():
+            if 'price' in form.changed_data:
+                form.instance.price_before_sale = None
             form.save()
             messages.success(request, f'Карточка «{app.name}» обновлена.')
             return redirect('main:app_detail', app_id=app.id)
@@ -330,7 +338,10 @@ def edit_app(request, app_id):
             form = AppSuperUserForm(instance=app)
         else:
             form = AppForm(instance=app)
-    return render(request, 'main/edit_app.html', {'form': form, 'app': app})
+    return render(request, 'main/edit_app.html', {'form': form, 'app': app} )
+
+
+
 
 
 
