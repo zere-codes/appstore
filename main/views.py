@@ -4,6 +4,8 @@ from .models import App, Category, Review, Purchase
 from django.db.models import Q, Sum
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import (
@@ -32,6 +34,8 @@ SORTS = {
     'expensive': ('-price', 'pk'),
 }
 
+@cache_page(60)
+@vary_on_cookie
 def index(request):
     q = request.GET.get('q', '')
     sort = request.GET.get('sort', 'new')
@@ -207,9 +211,10 @@ def add_review(request, app_id):
 
     })
 
+@cache_page(60)
 def api_app_detail(request, app_id):
     app= get_object_or_404(App, id=app_id)
-    icon=get_object_or_404(App, app.icon.url )
+    # icon=get_object_or_404(App, app.icon.url )
 
 
     data={
@@ -217,7 +222,7 @@ def api_app_detail(request, app_id):
         'name': app.name,
         'description': app.description,
         'price': app.price,
-        'icon': get_object_or_404(App, icon.url if app.icon else None)
+        # 'icon': get_object_or_404(App, icon.url if app.icon else None)
     }
     return JsonResponse(data)
 
@@ -294,8 +299,9 @@ def my_prices(request):
         if formset.is_valid():
             for form in formset:
                 if 'price' in form.changed_data:
-                    form.instance.price_before_sale = None
-                    removed=removed+1
+                    if form.instance.price_before_sale:
+                        form.instance.price_before_sale = None
+                        removed=removed+1
 
             saved = formset.save()
             messages.success(request, f"Изменено карточек: {len(saved)},снято с распродажи: {removed}")
