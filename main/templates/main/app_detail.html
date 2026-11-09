@@ -1,5 +1,7 @@
 {% extends 'main/base.html' %}
 {%load store_tags%}
+{%load bbcode_tags%}
+
 {% block title %}{{app.name}}-Appstore{% endblock %}
 
 {% block content %}
@@ -19,8 +21,9 @@
             без категории
         {% endif %}
     </p>
+    <p>Описание</p>
 
-    <p>{{app.description|default:"описание пока не добавлено"}}</p>
+    <p>{%bbcode app.description%}</p>
 
 
     <p><strong>Цена: {{app.price_label}}</strong>

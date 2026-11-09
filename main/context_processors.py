@@ -22,7 +22,7 @@ def store_menu(request):
     if apps_count is None:
         apps_count = App.objects.count()
 
-    cache.set('apps_count', apps_count, 60 * 10)
+        cache.set('apps_count', apps_count, 60 * 10)
 
 
     return {
@@ -33,8 +33,4 @@ def store_menu(request):
         'featured': featured,
         'favorites_count': favorites_count,
     }
-
-
-
-
 

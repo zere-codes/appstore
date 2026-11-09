@@ -1,10 +1,11 @@
 {% load static %}
-
+{% load django_bootstrap5 %}
 
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    {% bootstrap_css %}
     <link rel="stylesheet" href="{% static 'main/style.css' %}"   >
   <title>{% block title %}AppStore{% endblock %}</title>
 </head>
@@ -90,13 +91,9 @@
         <a href="{% url 'main:favorites' %}">Избранное ({{favorites_count}})</a>
     </nav>
 
-    {% if messages %}
-        <ul class ="messages">
-            {%for message in messages%}
-                <li {% if message.tags %} class="{{message.tags}}"{%endif%}>{{message}}</li>
-            {%endfor%}
-        </ul>
-    {% endif %}
+    {% bootstrap_messages %}
+       
+
 
     <p> {% include 'main/categories_nav.html' %} </p>
 
@@ -123,6 +120,8 @@
      <footer>Всего на сайте категорий {{categories_total}} и {{apps_total}} приложений.
          Всего отзывов в приложении {{reviews_total}}</footer>
 
+
+{%bootstrap_javascript%}
 </body>
 </html>
 
