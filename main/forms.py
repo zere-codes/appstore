@@ -41,13 +41,15 @@ class AppForm(forms.ModelForm):
     class Meta :
         model=App
         fields=['name','description', 'price', 'category', 'icon']
-        labels={}
         labels = {
             'name': 'Название',
             'description':'Описание' ,
             'price':'Цена',
             'category':'Категория',
             'icon':'Иконка',
+        }
+        help_texts={
+            'description': '[b][/b]-жирный, [i][/i] - курсив, [list]*Пункт списка[/list]- лист'
         }
 
 class AppSuperUserForm(AppForm):

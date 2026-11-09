@@ -23,8 +23,7 @@
     </p>
     <p>Описание</p>
 
-    <p>{%bbcode app.description%}</p>
-
+{% bbcode app.description|default:"описание пока не добавлено" %}
 
     <p><strong>Цена: {{app.price_label}}</strong>
     {%if app.price_before_sale%}
