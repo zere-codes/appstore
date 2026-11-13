@@ -6,6 +6,10 @@
     <h2>Редактировать «{{ app.name }}»</h2>
     <p>Если новую иконку не выбирать, останется текущая. Галочка Clear под полем файла удаляет её.</p>
 
+    {%if app.icon %}
+         <p>Сейчас:<img src="{{app.icon.url}}" alt="{{app.name}}" class="currently-icon"></p>
+
+    {%endif%}
     <form method="post" action="{% url 'main:edit_app' app.id %}" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}

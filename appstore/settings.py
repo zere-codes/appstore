@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_bootstrap5',
     'precise_bbcode',
     'main.apps.MainConfig',
+    'easy_thumbnails',
 ]
 
 MIDDLEWARE = [

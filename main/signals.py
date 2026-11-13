@@ -2,7 +2,8 @@
 from decimal import Decimal, ROUND_HALF_UP
 
 from django.db.models import Avg, Count
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import post_delete, post_save, pre_save
+
 from django.dispatch import receiver
 from django.core.cache import cache
 
@@ -47,6 +48,13 @@ def clear_store_cache(sender, **kwargs):
     cache.clear()
 
 
+
+
+@receiver(pre_save, sender=App)
+def delete_old_icon(sender, instance, **kwargs):
+    old=App.objects.filter(pk=instance.pk).first()
+    if old and old.icon!=instance.icon:
+        old.icon.delete(save=False)
 
 
 

@@ -49,7 +49,8 @@ class AppForm(forms.ModelForm):
             'icon':'Иконка',
         }
         help_texts={
-            'description': '[b][/b]-жирный, [i][/i] - курсив, [list]*Пункт списка[/list]- лист'
+            'description': '[b][/b]-жирный, [i][/i] - курсив, [list][*]Пункт списка[/list]- лист',
+            'icon':'принимаются форматы: png, jpeg, jpg, webp. Картинка будет уменьшена до 256:256 '
         }
 
 class AppSuperUserForm(AppForm):
