@@ -56,5 +56,9 @@ def delete_old_icon(sender, instance, **kwargs):
     if old and old.icon!=instance.icon:
         old.icon.delete(save=False)
 
+@receiver(post_delete, sender=App)
+def delete_card(sender, instance, **kwargs):
+    if instance.icon:
+        instance.icon.delete(save=False)
 
 
