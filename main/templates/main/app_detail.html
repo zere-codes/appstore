@@ -33,6 +33,12 @@
     </p>
 
 
+{%for shot in app.screenshots.all%}
+<img src="{{shot.image.url}}" alt="Скриншот {{app.name}}" class="img-thumbnails" width="200">
+{% endfor %}
+
+
+
     <p>Примерно по такой цене:</p>
     {% for app in similar %}
          <p> {% include 'main/app_list_item.html' %} </p>
